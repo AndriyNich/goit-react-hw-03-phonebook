@@ -4,11 +4,29 @@ import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
 import { ContactsList } from './ContactsList/ContactsList';
 
+const LS_LIST = 'contactsList';
+
 export class App extends Component {
   state = {
     contacts: [],
     filter: '',
   };
+
+  componentDidMount() {
+    let contacts = localStorage.getItem(LS_LIST);
+    if (contacts) {
+      try {
+        contacts = JSON.parse(contacts);
+        if (Array.isArray(contacts)) {
+          this.setState({ contacts });
+        }
+      } catch {}
+    }
+  }
+
+  componentDidUpdate() {
+    localStorage.setItem(LS_LIST, JSON.stringify(this.state.contacts));
+  }
 
   contains = ({ name }) => {
     return this.state.contacts.filter(elem => elem.name === name).length;
